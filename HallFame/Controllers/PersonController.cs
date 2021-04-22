@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HallOfFame.Models;
-using Microsoft.Extensions.Logging;
 using AppContext = HallOfFame.Models.AppContext;
 
 namespace HallOfFame.Controllers
@@ -39,7 +37,7 @@ namespace HallOfFame.Controllers
             if (person == null)
             {
                 Dictionary<string, string> errors = new Dictionary<string, string>();
-                errors["Others"] = "Сущность не найдена";
+                errors["Others"] = "Сущности с таким id не существует";
                 return NotFound(errors);
             }
 
@@ -47,23 +45,21 @@ namespace HallOfFame.Controllers
         }
 
         // PUT: api/v1/person/id Обновление данных конкретного сотрудника
-        [HttpPut("{id}")]
+        [Microsoft.AspNetCore.Mvc.HttpGet("{id}")]
         public async Task<IActionResult> PutPerson(long id, Person updatedPerson)
         {
             if (id != updatedPerson.Id)
             {
                 Dictionary<string, string> errors = new Dictionary<string, string>();
-                errors["Others"] = "Неверный запрос";
+                errors["Others"] = "Такого id не существует";
                 return BadRequest(errors);
             }
 
 
             var person = await _context.Persons.FindAsync(id);
 
-            //обновляем поля у сотрудника
             _context.Entry(person).CurrentValues.SetValues(updatedPerson);
 
-            //получаем текущие навыки сотрудника
             var personSkills = person.Skills.ToList();
 
             foreach (var personSkill in personSkills)
@@ -71,17 +67,10 @@ namespace HallOfFame.Controllers
                 var skill = updatedPerson.Skills.SingleOrDefault(s => s.Name == personSkill.Name);
                 if (skill != null)
                 {
-                    //обновляем поле у навыка сотрудника
                     _context.Entry(personSkill).CurrentValues.SetValues(skill);
-                }
-                else
-                {
-                    //удаляем, если навыка нет
-                    _context.Remove(personSkill);
                 }
             }
 
-            //добавляем новые навыки
             foreach (var skill in updatedPerson.Skills)
             {
                 if (personSkills.All(s => s.Name != skill.Name))
@@ -99,7 +88,7 @@ namespace HallOfFame.Controllers
                 if (!PersonExists(id))
                 {
                     Dictionary<string, string> errors = new Dictionary<string, string>();
-                    errors["Others"] = "Сущность не найдена";
+                    errors["Others"] = "Сущности с таким id не существует";
                     return NotFound(errors);
                 }
                 else
@@ -129,7 +118,7 @@ namespace HallOfFame.Controllers
             if (person == null)
             {
                 Dictionary<string, string> errors = new Dictionary<string, string>();
-                errors["Others"] = "Сущность не найдена";
+                errors["Others"] = "Сущности с таким id не существует";
                 return NotFound(errors);
             }
 
