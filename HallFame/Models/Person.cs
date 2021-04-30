@@ -8,10 +8,8 @@ namespace HallOfFame.Models
     /// </summary>
     public class Person
     {
-        private long _id;
         private string _name;
         private string _displayName;
-        private Skill _skills;
 
         public long Id { get; set; }
        

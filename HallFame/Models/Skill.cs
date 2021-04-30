@@ -10,6 +10,7 @@ namespace HallOfFame.Models
     {
         private string _name;
         private byte _level;
+        private long _personID;
 
         public string Name 
         {
@@ -23,6 +24,8 @@ namespace HallOfFame.Models
                 _name = value;
             }
         }
+
+        public long PersonId { get; set; }
 
         public byte Level
         {
